@@ -25,8 +25,9 @@ add_executable(
     "src/Controller/Singleton/GameObjectManager.cpp"  
     "src/Controller/Singleton/TextureManager.cpp"
     "src/GameObject/ScrollingBackground.cpp"
-    "src/GameObject/FPSCounter.h"
     "src/GameObject/FPSCounter.cpp" 
- "src/GameObject/TextureDisplay.cpp" "src/GameObject/TextureDisplay.h" "src/GameObject/IconObject.cpp" "src/GameObject/IconObject.h")
+    "src/GameObject/TextureDisplay.cpp" 
+    "src/GameObject/IconObject.cpp" 
+)
 
 target_link_libraries(GDPARCM PRIVATE SFML::Graphics)
