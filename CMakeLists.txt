@@ -14,5 +14,13 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(GDPARCM src/main.cpp)
+add_executable(
+    GDPARCM 
+    "src/Main.cpp" 
+    "src/Controller/Application.cpp"
+    "src/Controller/Singleton/GameObjectManager.cpp"  
+    "src/Utility/FileUtility.h"
+    "src/Model/FPSCounter.h"
+ "src/Model/FPSCounter.cpp" "src/Config/Settings.h")
+
 target_link_libraries(GDPARCM PRIVATE SFML::Graphics)
