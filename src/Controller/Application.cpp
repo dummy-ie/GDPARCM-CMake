@@ -1,20 +1,26 @@
 #include "Application.h"
 
-#include <iostream>
-
-#include "../Config/Settings.h"
-#include "../Model/FPSCounter.h"
-#include "Singleton/GameObjectManager.h"
-
 using namespace gd;
 
 Application::Application()
 {
 	window = sf::RenderWindow(
-		sf::VideoMode({WindowWidth, WindowHeight}), "[LEOCARIO] GDPARCM");
+		sf::VideoMode({ WindowWidth, WindowHeight }),
+		"[LEOCARIO] GDPARCM",
+		sf::Style::Default,
+		sf::State::Windowed
+	);
+
+	TextureManager::getInstance()->loadFromAssetList();
+
+	ScrollingBackground* scrollingBackground = new ScrollingBackground();
+	GameObjectManager::getInstance()->addObject(scrollingBackground);
 
 	FPSCounter* fpsCounter = new FPSCounter();
 	GameObjectManager::getInstance()->addObject(fpsCounter);
+
+	TextureDisplay* textureDisplay = new TextureDisplay();
+	GameObjectManager::getInstance()->addObject(textureDisplay);
 
 	window.setFramerateLimit(FramerateCap);
 }

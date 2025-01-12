@@ -1,7 +1,10 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "../Utility/FileUtility.h"
+
+#include "../Config/Settings.h"
+#include "../Utility/FileUtils.h"
+
 #include "GameObject.h"
 
 namespace gd
@@ -15,7 +18,7 @@ namespace gd
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 	private:
-		sf::Font fpsCounterFont = sf::Font(FileUtility::getFileFromSourceFolder("View/Sansation.ttf"));
+		sf::Font fpsCounterFont = sf::Font(FileUtils::getFileFromAssetsFolder("Sansation.ttf"));
 		sf::Text fpsCounter = fpsCounterFont;
 
 		sf::Clock updateClock;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "../../Model/GameObject.h"
+#include "../../GameObject/GameObject.h"
 #include "SFML/Graphics/RenderWindow.hpp"
 
 namespace gd

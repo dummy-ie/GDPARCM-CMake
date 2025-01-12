@@ -1,5 +1,7 @@
 #include "GameObjectManager.h"
 
+#include "../../Utility/LogUtils.h"
+
 using namespace gd;
 
 GameObjectManager* GameObjectManager::sharedInstance = nullptr;
@@ -44,6 +46,7 @@ void GameObjectManager::updateAllObjects(const sf::Time deltaTime) const
 {
 	for (GameObject* gameObject : gameObjectList)
 	{
+		//LogUtils::log(this, "updating: " + gameObject->getName());
 		gameObject->update(deltaTime);
 	}
 }

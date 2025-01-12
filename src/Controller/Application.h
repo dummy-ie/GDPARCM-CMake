@@ -2,7 +2,15 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-#include "../Utility/FileUtility.h"
+
+#include "../Config/Settings.h"
+
+#include "Singleton/TextureManager.h"
+#include "Singleton/GameObjectManager.h"
+
+#include "../GameObject/ScrollingBackground.h"
+#include "../GameObject/TextureDisplay.h"
+#include "../GameObject/FPSCounter.h"
 
 namespace gd
 {

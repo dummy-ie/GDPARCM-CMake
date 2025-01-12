@@ -17,10 +17,16 @@ FetchContent_MakeAvailable(SFML)
 add_executable(
     GDPARCM 
     "src/Main.cpp" 
+    "src/Config/Settings.h" 
+    "src/Utility/FileUtils.h"
+    "src/Utility/StringUtils.h" 
+    "src/Utility/LogUtils.h"
     "src/Controller/Application.cpp"
     "src/Controller/Singleton/GameObjectManager.cpp"  
-    "src/Utility/FileUtility.h"
-    "src/Model/FPSCounter.h"
- "src/Model/FPSCounter.cpp" "src/Config/Settings.h")
+    "src/Controller/Singleton/TextureManager.cpp"
+    "src/GameObject/ScrollingBackground.cpp"
+    "src/GameObject/FPSCounter.h"
+    "src/GameObject/FPSCounter.cpp" 
+ "src/GameObject/TextureDisplay.cpp" "src/GameObject/TextureDisplay.h" "src/GameObject/IconObject.cpp" "src/GameObject/IconObject.h")
 
 target_link_libraries(GDPARCM PRIVATE SFML::Graphics)

@@ -10,7 +10,7 @@ namespace gd
 	class GameObject
 	{
 	public:
-		GameObject() = default;
+		explicit GameObject(std::string name);
 		virtual ~GameObject() = default;
 
 		// Disable copy operators
@@ -22,5 +22,19 @@ namespace gd
 	public:
 		virtual void update(const sf::Time deltaTime) = 0;
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const = 0;
+
+		std::string getName();
+
+	protected:
+		std::string name;
 	};
+
+	inline GameObject::GameObject(std::string name) : name(std::move(name))
+	{
+	}
+
+	inline std::string GameObject::getName()
+	{
+		return name;
+	}
 }
