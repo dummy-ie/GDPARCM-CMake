@@ -28,6 +28,6 @@ add_executable(
     "src/GameObject/FPSCounter.cpp" 
     "src/GameObject/TextureDisplay.cpp" 
     "src/GameObject/IconObject.cpp" 
-)
+ "src/Controller/IETThread.cpp" "src/Controller/IETThread.h")
 
 target_link_libraries(GDPARCM PRIVATE SFML::Graphics)

@@ -12,7 +12,9 @@ void TextureDisplay::update(const sf::Time deltaTime)
 	//this->ticks += FixedDeltaTime.asMilliseconds();
 
 	//<code here for spawning icon object periodically>
-	if (updateClock.getElapsedTime().asSeconds() < updateRateSeconds)
+	if (updateClock.getElapsedTime().asSeconds() < updateRateSeconds
+		|| iconList.size() == 480
+		)
 		return;
 
 	spawnObject();
@@ -32,7 +34,7 @@ void TextureDisplay::draw(sf::RenderTarget& target, sf::RenderStates states) con
 void TextureDisplay::spawnObject()
 {
 	//String objectName = "Icon_" + std::to_string(this->iconList.size());
-	//TextureManager::getInstance()->loadSingleStreamAsset(this->iconList.size());
+	TextureManager::getInstance()->loadSingleStreamAsset(this->iconList.size());
 
 	IconObject* iconObj = new IconObject(this->iconList.size());
 	this->iconList.push_back(iconObj);
@@ -44,7 +46,7 @@ void TextureDisplay::spawnObject()
 	float y = this->rowGrid * imgHeight;
 	iconObj->setPosition({ x, y });
 
-	LogUtils::log( this, "Set position: " + std::to_string(x) + " " + std::to_string(y));
+	//LogUtils::log( this, "Set position: " + std::to_string(x) + " " + std::to_string(y));
 
 	this->columnGrid++;
 	if (this->columnGrid == this->maxColumn)
@@ -54,5 +56,5 @@ void TextureDisplay::spawnObject()
 	}
 
 	//GameObjectManager::getInstance()->addObject(iconObj);
-	LogUtils::log( this, "Added IconObject, iconList size: " + std::to_string(iconList.size()));
+	//LogUtils::log( this, "Added IconObject, iconList size: " + std::to_string(iconList.size()));
 }

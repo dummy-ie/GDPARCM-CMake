@@ -46,11 +46,13 @@ void TextureManager::loadSingleStreamAsset(const int index)
 		if (index == fileNum)
 		{
 			//simulate loading of very large file
-			//<code here for thread sleeping. Fill this up only when instructor told so.>
-
+			IETThread::sleep(200);
 
 			//<code here for loading asset>
-			const String assetName;
+			const String path = entry.path().generic_string();
+			std::vector<String> tokens = StringUtils::split(path, '/');
+			String assetName = StringUtils::split(tokens[tokens.size() - 1], '.')[0];
+			instantiateAsTexture(path, assetName, true);
 
 			LogUtils::log(this, "Loaded streaming texture: " + assetName);
 			break;
@@ -96,8 +98,8 @@ void TextureManager::countStreamingAssets()
 {
 	this->streamingAssetCount = 0;
 	for (const auto& entry : std::filesystem::directory_iterator(streamingPath)) {
-		instantiateAsTexture(entry.path().string(), std::to_string(streamingAssetCount), true);
-		LogUtils::log(this, "Loaded in stream asset: " + std::to_string(this->streamingAssetCount));
+		//instantiateAsTexture(entry.path().string(), std::to_string(streamingAssetCount), true);
+		//LogUtils::log(this, "Loaded in stream asset: " + std::to_string(this->streamingAssetCount));
 		this->streamingAssetCount++;
 	}
 

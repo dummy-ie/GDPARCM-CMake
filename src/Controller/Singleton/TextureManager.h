@@ -5,6 +5,7 @@
 
 #include "../../Utility/LogUtils.h"
 #include "../../Utility/FileUtils.h"
+#include "../IETThread.h"
 
 namespace gd
 {
