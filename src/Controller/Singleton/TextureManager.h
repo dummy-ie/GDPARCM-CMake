@@ -5,7 +5,9 @@
 
 #include "../../Utility/LogUtils.h"
 #include "../../Utility/FileUtils.h"
-#include "../IETThread.h"
+#include "../../Threading/IETThread.h"
+#include "../../Threading/IExecutionEvent.h"
+#include "../../Threading/StreamAssetLoader.h"
 
 namespace gd
 {
@@ -27,12 +29,14 @@ namespace gd
 
 		static TextureManager* getInstance();
 		void loadFromAssetList(); //loading of all assets needed for startup
-		void loadSingleStreamAsset(int index); //loads a single streaming asset based on index in directory
+		void loadSingleStreamAsset(int index, IExecutionEvent* executionEvent); //loads a single streaming asset based on index in directory
 		sf::Texture* getFromTextureMap(const String& assetName, int frameIndex);
 		int getNumFrames(const String& assetName);
 
 		sf::Texture* getStreamTextureFromList(const int index) const;
 		int getNumLoadedStreamTextures() const;
+
+		void instantiateAsTexture(const String& path, const String& assetName, bool isStreaming);
 
 	private:
 		static TextureManager* sharedInstance;
@@ -45,7 +49,6 @@ namespace gd
 		int streamingAssetCount = 0;
 
 		void countStreamingAssets();
-		void instantiateAsTexture(const String& path, const String& assetName, bool isStreaming);
 
 	};
 }

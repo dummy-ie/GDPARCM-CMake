@@ -5,21 +5,24 @@ using namespace gd;
 TextureDisplay::TextureDisplay() : GameObject("TextureDisplay")
 {
 	updateClock.start();
+	iconList.reserve(480);
 }
 
 void TextureDisplay::update(const sf::Time deltaTime)
 {
-	//this->ticks += FixedDeltaTime.asMilliseconds();
-
-	//<code here for spawning icon object periodically>
-	if (updateClock.getElapsedTime().asSeconds() < updateRateSeconds
-		|| iconList.size() == 480
-		)
-		return;
-
-	spawnObject();
-	
-	updateClock.restart();
+	this->ticks += FixedDeltaTime.asMilliseconds();
+	if (this->streamingType == StreamingType::BATCH_LOAD && !this->startedStreaming && this->ticks > this->STREAMING_LOAD_DELAY)
+	{
+		// this->startedStreaming = true;
+		// this->ticks = 0.0f;
+		// TextureManager::getInstance()->loadStreamingAssets();
+	}
+	else if (this->streamingType == StreamingType::SINGLE_STREAM && this->ticks > this->STREAMING_LOAD_DELAY)
+	{
+		this->ticks = 0.0f;
+		TextureManager::getInstance()->loadSingleStreamAsset(this->numDisplayed, this);
+		this->numDisplayed++;
+	}
 }
 
 void TextureDisplay::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -34,8 +37,6 @@ void TextureDisplay::draw(sf::RenderTarget& target, sf::RenderStates states) con
 void TextureDisplay::spawnObject()
 {
 	//String objectName = "Icon_" + std::to_string(this->iconList.size());
-	TextureManager::getInstance()->loadSingleStreamAsset(this->iconList.size());
-
 	IconObject* iconObj = new IconObject(this->iconList.size());
 	this->iconList.push_back(iconObj);
 
@@ -57,4 +58,9 @@ void TextureDisplay::spawnObject()
 
 	//GameObjectManager::getInstance()->addObject(iconObj);
 	//LogUtils::log( this, "Added IconObject, iconList size: " + std::to_string(iconList.size()));
+}
+
+void TextureDisplay::onFinishedExecution()
+{
+	spawnObject();
 }

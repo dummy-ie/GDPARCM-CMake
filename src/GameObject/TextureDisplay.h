@@ -10,6 +10,7 @@
 #include "../Controller/Singleton/TextureManager.h"
 #include "IconObject.h"
 #include "GameObject.h"
+#include "../Threading/IExecutionEvent.h"
 
 namespace gd
 {
@@ -17,7 +18,7 @@ namespace gd
 	/// <summary>
 	/// Class that deals with displaying of streamed textures
 	/// </summary>
-	class TextureDisplay final : public GameObject
+	class TextureDisplay final : public GameObject, public IExecutionEvent
 	{
 	public:
 		TextureDisplay();
@@ -35,12 +36,13 @@ namespace gd
 			SINGLE_STREAM = 1
 		};
 
-		const float streamingLoadDelay = 4000.0f;
+		const float STREAMING_LOAD_DELAY = 25.f; //greatly reduce streaming load delay to demonstrate performance drop.
 		const StreamingType streamingType = StreamingType::SINGLE_STREAM;
-		//float ticks = 0.0f;
+		float ticks = 0.0f;
 		bool startedStreaming = false;
 
 		int columnGrid = 0; int rowGrid = 0;
+		int numDisplayed = 0;
 
 		const int maxColumn = 28;
 		const int maxRow = 22;
@@ -49,5 +51,8 @@ namespace gd
 		float updateRateSeconds = .25f;
 
 		void spawnObject();
+
+	public:
+		void onFinishedExecution() override;
 	};
 }

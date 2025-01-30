@@ -2,6 +2,10 @@
 #include <iostream>
 #include <filesystem>
 #include "TextureManager.h"
+
+#include <random>
+
+#include "../../Threading/IExecutionEvent.h"
 #include "../../Utility/StringUtils.h"
 
 using namespace gd;
@@ -38,7 +42,7 @@ void TextureManager::loadFromAssetList()
 	}
 }
 
-void TextureManager::loadSingleStreamAsset(const int index)
+void TextureManager::loadSingleStreamAsset(const int index, IExecutionEvent* executionEvent)
 {
 	int fileNum = 0;
 
@@ -46,15 +50,21 @@ void TextureManager::loadSingleStreamAsset(const int index)
 		if (index == fileNum)
 		{
 			//simulate loading of very large file
-			IETThread::sleep(200);
+			std::random_device seeder;
+			std::mt19937 engine(seeder());
+			std::uniform_int_distribution<int> dist(1, 100);
+			IETThread::sleep(dist(engine));
 
 			//<code here for loading asset>
 			const String path = entry.path().generic_string();
-			std::vector<String> tokens = StringUtils::split(path, '/');
-			String assetName = StringUtils::split(tokens[tokens.size() - 1], '.')[0];
-			instantiateAsTexture(path, assetName, true);
+			 std::vector<String> tokens = StringUtils::split(path, '/');
+			 String assetName = StringUtils::split(tokens[tokens.size() - 1], '.')[0];
+			// instantiateAsTexture(path, assetName, true);
 
-			LogUtils::log(this, "Loaded streaming texture: " + assetName);
+			StreamAssetLoader* assetLoader = new StreamAssetLoader(path, executionEvent);
+			assetLoader->start();
+
+			//LogUtils::log(this, "Loaded streaming texture: " + assetName);
 			break;
 		}
 

@@ -28,6 +28,12 @@ add_executable(
     "src/GameObject/FPSCounter.cpp" 
     "src/GameObject/TextureDisplay.cpp" 
     "src/GameObject/IconObject.cpp" 
- "src/Controller/IETThread.cpp" "src/Controller/IETThread.h")
+    "src/Threading/IETThread.cpp"
+    "src/Threading/IETThread.h"
+    "src/Threading/IExecutionEvent.cpp"
+    "src/Threading/IExecutionEvent.h"
+    "src/Threading/StreamAssetLoader.cpp"
+    "src/Threading/StreamAssetLoader.h"
+)
 
 target_link_libraries(GDPARCM PRIVATE SFML::Graphics)
