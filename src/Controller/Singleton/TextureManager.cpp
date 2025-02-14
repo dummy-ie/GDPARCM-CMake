@@ -50,10 +50,10 @@ void TextureManager::loadSingleStreamAsset(const int index, IExecutionEvent* exe
 		if (index == fileNum)
 		{
 			//simulate loading of very large file
-			std::random_device seeder;
-			std::mt19937 engine(seeder());
-			std::uniform_int_distribution<int> dist(1, 100);
-			IETThread::sleep(dist(engine));
+			// std::random_device seeder;
+			// std::mt19937 engine(seeder());
+			// std::uniform_int_distribution<int> dist(200, 600);
+			// IETThread::sleep(dist(engine));
 
 			//<code here for loading asset>
 			const String path = entry.path().generic_string();
