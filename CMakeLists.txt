@@ -34,6 +34,12 @@ add_executable(
     "src/Threading/IExecutionEvent.h"
     "src/Threading/StreamAssetLoader.cpp"
     "src/Threading/StreamAssetLoader.h"
+    "src/Threading/ThreadPool.cpp"
+    "src/Threading/ThreadPool.h"
+    "src/Threading/PoolWorkerThread.cpp"
+    "src/Threading/PoolWorkerThread.h"
+    "src/Threading/IWorkerAction.cpp"
+    "src/Threading/IWorkerAction.h"
 )
 
 target_link_libraries(GDPARCM PRIVATE SFML::Graphics)

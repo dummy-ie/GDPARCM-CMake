@@ -25,6 +25,13 @@ TextureManager* TextureManager::getInstance() {
 TextureManager::TextureManager()
 {
 	this->countStreamingAssets();
+	this->threadPool = new ThreadPool("TextureManagerPool", 12);
+	this->threadPool->startScheduler();
+}
+
+TextureManager::~TextureManager()
+{
+	delete threadPool;
 }
 
 void TextureManager::loadFromAssetList()
@@ -57,12 +64,16 @@ void TextureManager::loadSingleStreamAsset(const int index, IExecutionEvent* exe
 
 			//<code here for loading asset>
 			const String path = entry.path().generic_string();
-			 std::vector<String> tokens = StringUtils::split(path, '/');
-			 String assetName = StringUtils::split(tokens[tokens.size() - 1], '.')[0];
+			std::vector<String> tokens = StringUtils::split(path, '/');
+			String assetName = StringUtils::split(tokens[tokens.size() - 1], '.')[0];
 			// instantiateAsTexture(path, assetName, true);
 
 			StreamAssetLoader* assetLoader = new StreamAssetLoader(path, executionEvent);
-			assetLoader->start();
+			this->threadPool->scheduleTask(assetLoader);
+
+
+			// StreamAssetLoader* assetLoader = new StreamAssetLoader(path, executionEvent);
+			// assetLoader->start();
 
 			//LogUtils::log(this, "Loaded streaming texture: " + assetName);
 			break;

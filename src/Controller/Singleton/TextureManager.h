@@ -8,6 +8,7 @@
 #include "../../Threading/IETThread.h"
 #include "../../Threading/IExecutionEvent.h"
 #include "../../Threading/StreamAssetLoader.h"
+#include "../../Threading/ThreadPool.h"
 
 namespace gd
 {
@@ -19,7 +20,7 @@ namespace gd
 		typedef std::unordered_map<String, TextureList> HashTable;
 
 		TextureManager();
-		~TextureManager() = default;
+		~TextureManager();
 
 		// Disable copy operators
 		TextureManager(const TextureManager&) = delete;
@@ -41,6 +42,7 @@ namespace gd
 	private:
 		static TextureManager* sharedInstance;
 
+		ThreadPool* threadPool;
 		HashTable textureMap;
 		TextureList baseTextureList;
 		TextureList streamTextureList;

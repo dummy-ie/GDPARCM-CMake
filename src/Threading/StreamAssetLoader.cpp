@@ -16,12 +16,12 @@ StreamAssetLoader::StreamAssetLoader(String path, IExecutionEvent* executionEven
 
 StreamAssetLoader::~StreamAssetLoader()
 {
-	std::cout << "Destroying stream asset loader. " << std::endl;
+	std::cout << "Destroying stream asset loader. " << '\n';
 }
 
-void StreamAssetLoader::run()
+void StreamAssetLoader::onStartTask()
 {
-	std::cout << "Running stream asset loader " << std::endl;
+	std::cout << "Running stream asset loader " << '\n';
 	//simulate loading of very large file
 	// std::random_device seeder;
 	// std::mt19937 engine(seeder());
@@ -33,7 +33,7 @@ void StreamAssetLoader::run()
 
 	TextureManager::getInstance()->instantiateAsTexture(path, assetName, true);
 
-	std::cout << "[TextureManager] Loaded streaming texture: " << assetName << std::endl;
+	std::cout << "[TextureManager] Loaded streaming texture: " << assetName << '\n';
 
 	this->execEvent->onFinishedExecution();
 	//delete after being done
