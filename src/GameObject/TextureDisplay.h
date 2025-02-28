@@ -11,6 +11,7 @@
 #include "IconObject.h"
 #include "GameObject.h"
 #include "../Threading/IExecutionEvent.h"
+#include "SFML/Audio/Music.hpp"
 
 namespace gd
 {
@@ -23,10 +24,13 @@ namespace gd
 	public:
 		TextureDisplay();
 
+		void startLoading();
 		void update(const sf::Time deltaTime) override;
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 	private:
+		sf::Music music;
+
 		typedef std::vector<IconObject*> IconList;
 		IconList iconList;
 
@@ -36,19 +40,15 @@ namespace gd
 			SINGLE_STREAM = 1
 		};
 
-		const float STREAMING_LOAD_DELAY = 100.0f; //greatly reduce streaming load delay to demonstrate performance drop.
+		const float FRAME_RATE = 29.97f; 
 		const StreamingType streamingType = StreamingType::SINGLE_STREAM;
 		float ticks = 0.0f;
 		bool startedStreaming = false;
 
-		int columnGrid = 0; int rowGrid = 0;
 		int numDisplayed = 0;
-
-		const int maxColumn = 28;
-		const int maxRow = 22;
-
-		sf::Clock updateClock;
-		float updateRateSeconds = .25f;
+		int displayIdx = 0;
+		bool isDoneDisplaying = false;
+		bool isDoneLoading = false;
 
 		void spawnObject();
 

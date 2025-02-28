@@ -20,6 +20,8 @@ namespace gd
 		Application();
 		~Application() = default;
 
+		static Application* getInstance();
+		const sf::RenderWindow& getWindow();
 		void execute();
 
 		// Disable copy operators
@@ -29,8 +31,9 @@ namespace gd
 		Application& operator=(Application&&) = delete;
 
 	private:
+		static Application* sharedInstance;
+
 		sf::RenderWindow window;
-		
 
 		void render();
 		void pollEvents();

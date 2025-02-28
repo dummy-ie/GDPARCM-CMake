@@ -26,7 +26,7 @@ void StreamAssetLoader::onStartTask()
 	// std::random_device seeder;
 	// std::mt19937 engine(seeder());
 	// std::uniform_int_distribution<int> dist(100, 1000);
-	IETThread::sleep(1000);
+	//IETThread::sleep(1000);
 
 	std::vector<String> tokens = StringUtils::split(path, '/');
 	String assetName = StringUtils::split(tokens[tokens.size() - 1], '.')[0];

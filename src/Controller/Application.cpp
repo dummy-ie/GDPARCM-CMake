@@ -1,6 +1,10 @@
 #include "Application.h"
 
+#include "../GameObject/LoadingScreen.h"
+
 using namespace gd;
+
+Application* Application::sharedInstance = nullptr;
 
 Application::Application()
 {
@@ -11,18 +15,37 @@ Application::Application()
 		sf::State::Windowed
 	);
 
-	TextureManager::getInstance()->loadFromAssetList();
-
-	ScrollingBackground* scrollingBackground = new ScrollingBackground();
-	GameObjectManager::getInstance()->addObject(scrollingBackground);
+	// ScrollingBackground* scrollingBackground = new ScrollingBackground();
+	// GameObjectManager::getInstance()->addObject(scrollingBackground);
 
 	FPSCounter* fpsCounter = new FPSCounter();
 	GameObjectManager::getInstance()->addObject(fpsCounter);
 
-	TextureDisplay* textureDisplay = new TextureDisplay();
-	GameObjectManager::getInstance()->addObject(textureDisplay);
+	TextureManager::getInstance()->loadLoadingScreenTextures();
+
+	LoadingScreen* loadingScreen = new LoadingScreen();
+	GameObjectManager::getInstance()->addObject(loadingScreen);
+
+	// TextureDisplay* textureDisplay = new TextureDisplay();
+	// GameObjectManager::getInstance()->addObject(textureDisplay);
+	// textureDisplay->startLoading();
 
 	window.setFramerateLimit(FramerateCap);
+}
+
+Application* Application::getInstance()
+{
+	if (sharedInstance == nullptr) {
+		//initialize
+		sharedInstance = new Application();
+	}
+
+	return sharedInstance;
+}
+
+const sf::RenderWindow& Application::getWindow()
+{
+	return window;
 }
 
 void Application::execute()

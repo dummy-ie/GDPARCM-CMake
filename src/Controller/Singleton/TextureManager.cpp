@@ -24,9 +24,9 @@ TextureManager* TextureManager::getInstance() {
 
 TextureManager::TextureManager()
 {
-	this->countStreamingAssets();
-	this->threadPool = new ThreadPool("TextureManagerPool", 12);
-	this->threadPool->startScheduler();
+	// this->countStreamingAssets();
+	// this->threadPool = new ThreadPool("TextureManagerPool", 12);
+	// this->threadPool->startScheduler();
 }
 
 TextureManager::~TextureManager()
@@ -34,19 +34,24 @@ TextureManager::~TextureManager()
 	delete threadPool;
 }
 
-void TextureManager::loadFromAssetList()
+void TextureManager::loadFromAssetList(IExecutionEvent* executionEvent)
 {
 	LogUtils::log(this, "Reading from asset list");
-	std::ifstream stream(FileUtils::getFileFromSourceFolder("Assets/assets.txt"));
-	String path;
 
-	while (std::getline(stream, path))
+	for (const auto& entry : std::filesystem::directory_iterator(streamingPath))
 	{
-		std::vector<String> tokens = StringUtils::split(path, '/');
+		// Artificial delay
+		//IETThread::sleep(1000);
+
+		std::vector<String> tokens = StringUtils::split(entry.path().generic_string(), '/');
 		String assetName = StringUtils::split(tokens[tokens.size() - 1], '.')[0];
-		this->instantiateAsTexture(path, assetName, false);
+		this->instantiateAsTexture(entry.path().generic_string(), assetName, false);
 		LogUtils::log(this, "Loaded texture: " + assetName);
+		baseAssetCount++;
 	}
+
+	executionEvent->onFinishedExecution();
+	LogUtils::log("Loaded number of base textures: " + std::to_string(getNumLoadedBaseTextures()));
 }
 
 void TextureManager::loadSingleStreamAsset(const int index, IExecutionEvent* executionEvent)
@@ -105,6 +110,16 @@ int TextureManager::getNumFrames(const String& assetName)
 	}
 }
 
+sf::Texture* TextureManager::getBaseTextureFromList(const int index) const
+{
+	return this->baseTextureList[index];
+}
+
+int TextureManager::getNumLoadedBaseTextures() const
+{
+	return baseAssetCount;
+}
+
 sf::Texture* TextureManager::getStreamTextureFromList(const int index) const
 {
 	return this->streamTextureList[index];
@@ -113,6 +128,36 @@ sf::Texture* TextureManager::getStreamTextureFromList(const int index) const
 int TextureManager::getNumLoadedStreamTextures() const
 {
 	return this->streamTextureList.size();
+}
+
+sf::Texture* TextureManager::getBackgroundTextureFromList(int index) const
+{
+	return backgroundList[index];
+}
+
+int TextureManager::getNumLoadedBackgroundTextures() const
+{
+	return backgroundList.size();
+}
+
+sf::Texture* TextureManager::getHighlightTextureFromList(int index) const
+{
+	return highlightList[index];
+}
+
+int TextureManager::getNumLoadedHighlightTextures() const
+{
+	return highlightList.size();
+}
+
+sf::Texture* TextureManager::getSmokeTextureFromList(int index) const
+{
+	return smokeList[index];
+}
+
+int TextureManager::getNumLoadedSmokeTextures() const
+{
+	return smokeList.size();
 }
 
 void TextureManager::countStreamingAssets()
@@ -125,6 +170,16 @@ void TextureManager::countStreamingAssets()
 	}
 
 	LogUtils::log(this, "Number of streaming assets: " + std::to_string(this->streamingAssetCount));
+}
+
+void TextureManager::instantiateTextureToList(const String& path, const String& assetName, TextureList& list)
+{
+	sf::Texture* texture = new sf::Texture();
+	LogUtils::logBool(this, texture->loadFromFile(FileUtils::getFileFromAssetsFolder(path)));
+	this->textureMap[assetName].push_back(texture);
+
+	list.push_back(texture);
+
 }
 
 void TextureManager::instantiateAsTexture(const String& path, const String& assetName, const bool isStreaming)
@@ -141,5 +196,39 @@ void TextureManager::instantiateAsTexture(const String& path, const String& asse
 	{
 		this->baseTextureList.push_back(texture);
 	}
+
+}
+
+void TextureManager::loadLoadingScreenTextures()
+{
+	for (const auto& entry : std::filesystem::directory_iterator(backgroundImagesPath))
+	{
+		std::vector<String> tokens = StringUtils::split(entry.path().generic_string(), '/');
+		String assetName = StringUtils::split(tokens[tokens.size() - 1], '.')[0];
+		instantiateTextureToList(entry.path().generic_string(), assetName, backgroundList);
+		LogUtils::log(this, "Loaded texture: " + assetName);
+	}
+
+	for (const auto& entry : std::filesystem::directory_iterator(highlightImagesPath))
+	{
+		std::vector<String> tokens = StringUtils::split(entry.path().generic_string(), '/');
+		String assetName = StringUtils::split(tokens[tokens.size() - 1], '.')[0];
+		instantiateTextureToList(entry.path().generic_string(), assetName, highlightList);
+		LogUtils::log(this, "Loaded texture: " + assetName);
+	}
+
+	for (const auto& entry : std::filesystem::directory_iterator(smokeImagesPath))
+	{
+		std::vector<String> tokens = StringUtils::split(entry.path().generic_string(), '/');
+		String assetName = StringUtils::split(tokens[tokens.size() - 1], '.')[0];
+		instantiateTextureToList(entry.path().generic_string(), assetName, smokeList);
+		LogUtils::log(this, "Loaded texture: " + assetName);
+		LogUtils::log(this, "Smoke list size: " + std::to_string(smokeList.size()));
+	}
+
+	auto levelDisplayPath = FileUtils::getFileFromAssetsFolder("Level Display.png");
+	sf::Texture* texture = new sf::Texture();
+	LogUtils::logBool(this, texture->loadFromFile(levelDisplayPath));
+	this->textureMap["Level Display"].push_back(texture);
 
 }

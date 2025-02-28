@@ -7,7 +7,7 @@ IconObject::IconObject(const int textureIndex) : GameObject("IconObject " + std:
 	this->textureIndex = textureIndex;
 
 	//assign texture
-	const sf::Texture* texture = TextureManager::getInstance()->getStreamTextureFromList(this->textureIndex);
+	const sf::Texture* texture = TextureManager::getInstance()->getBaseTextureFromList(this->textureIndex);
 	sprite = new sf::Sprite(*texture);
 	sprite->setTexture(*texture);
 }
@@ -24,5 +24,10 @@ void IconObject::draw(sf::RenderTarget& target, sf::RenderStates states) const
 void IconObject::setPosition(const sf::Vector2f position) const
 {
 	sprite->setPosition(position);
+}
+
+void IconObject::setScale(const sf::Vector2f scale) const
+{
+	sprite->setScale(scale);
 }
 

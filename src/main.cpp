@@ -9,6 +9,6 @@ using namespace gd;
 
 int main()
 {
-    Application app;
-    app.execute();
+    Application::getInstance()->execute();
+    //app.execute();
 }

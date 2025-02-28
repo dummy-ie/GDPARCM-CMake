@@ -17,10 +17,13 @@ namespace gd
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 		void setPosition(sf::Vector2f position) const;
+		void setScale(sf::Vector2f scale) const;
 
 	private:
 		int textureIndex = 0;
 		sf::Sprite* sprite;
+
+		friend class TextureDisplay;
 	};
 }
 

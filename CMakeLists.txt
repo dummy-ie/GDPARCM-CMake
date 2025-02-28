@@ -21,6 +21,7 @@ add_executable(
     "src/Utility/FileUtils.h"
     "src/Utility/StringUtils.h" 
     "src/Utility/LogUtils.h"
+    "src/Utility/RandomUtils.h"
     "src/Controller/Application.cpp"
     "src/Controller/Singleton/GameObjectManager.cpp"  
     "src/Controller/Singleton/TextureManager.cpp"
@@ -40,6 +41,10 @@ add_executable(
     "src/Threading/PoolWorkerThread.h"
     "src/Threading/IWorkerAction.cpp"
     "src/Threading/IWorkerAction.h"
-)
+    "src/Threading/BaseAssetLoader.cpp" 
+    "src/Threading/BaseAssetLoader.h"
+    "src/GameObject/LoadingScreen.h" 
+    "src/GameObject/LoadingScreen.cpp" 
+ "src/Utility/MathUtils.h")
 
-target_link_libraries(GDPARCM PRIVATE SFML::Graphics)
+target_link_libraries(GDPARCM PRIVATE SFML::Graphics SFML::Audio)
