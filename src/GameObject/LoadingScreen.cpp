@@ -89,7 +89,7 @@ void gd::LoadingScreen::splitTipsText()
 		text.insert(0, " ");
 		for (auto i = lineLen; i < text.length(); i += lineLen)
 		{
-			if (const auto cutoffIdx = text.find_first_of(' ', i); cutoffIdx > 0)
+			if (const auto cutoffIdx = text.find_first_of(' ', i); cutoffIdx > 0 && cutoffIdx < text.size())
 				text.insert(cutoffIdx, "\n");
 		}
 	}

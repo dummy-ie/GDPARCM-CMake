@@ -28,6 +28,7 @@ namespace gd
 			return { random(min.x, max.x), random(min.y, max.y) };
 		}
 
+		// Random UNIFORM vector. 
 		template <typename T>
 		static sf::Vector2<T> randomVector2(const T& min, const T& max) {
 			T r = random(min, max);
