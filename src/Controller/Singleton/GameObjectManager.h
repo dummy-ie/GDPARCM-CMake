@@ -20,7 +20,9 @@ namespace gd
 
 		static GameObjectManager* getInstance();
 		std::vector<GameObject*> getGameObjectList();
+
 		void addObject(GameObject* gameObject);
+		void removeObject(GameObject* gameObject);
 
 		void drawAllObjects(sf::RenderWindow* window) const;
 		void updateAllObjects(const sf::Time deltaTime) const;

@@ -1,5 +1,6 @@
 #include "LoadingScreen.h"
 
+#include "SmokeParticle.h"
 #include "../Config/Settings.h"
 #include "../Controller/Singleton/TextureManager.h"
 #include "../Controller/Application.h"
@@ -10,9 +11,10 @@
 gd::LoadingScreen::LoadingScreen() :
 	GameObject("LoadingScreen"), level(*TextureManager::getInstance()->getFromTextureMap("Level Display", 0))
 {
+	music = sf::Music(FileUtils::getFileFromAssetsFolder("Harvest Dawn.mp3"));
+
 	highlights.reserve(10);
 	backgrounds.reserve(10);
-	smoke.reserve(10);
 
 	for (int i = 0; i < TextureManager::getInstance()->getNumLoadedHighlightTextures(); ++i)
 	{
@@ -32,9 +34,9 @@ gd::LoadingScreen::LoadingScreen() :
 
 	for (int i = 0; i < 10; ++i)
 	{
-		sf::Sprite smokeSprite = sf::Sprite(*TextureManager::getInstance()->getSmokeTextureFromList(RandomUtils::getRandomInt(0, 1)));
-		smokeSprite.setColor(sf::Color(255, 255, 255, 20));
-		smoke.push_back(smokeSprite);
+		SmokeParticle* newSmoke = new SmokeParticle(sf::Vector2f(RandomUtils::random(-1.f, 1.f), -1.f).normalized());
+		GameObjectManager::getInstance()->addObject(newSmoke);
+		smoke.push_back(newSmoke);
 	}
 
 	level.setPosition({ (WindowWidth - level.getGlobalBounds().size.x) - 50, 0 });
@@ -44,16 +46,20 @@ gd::LoadingScreen::LoadingScreen() :
 	randomizeSprites();
 
 	setAssetsTransparent();
-	transitionTimer.start();
+
+	music.setLooping(true);
+	music.play();
+	transitionClock.start();
+	smokeClock.start();
 }
 
 void gd::LoadingScreen::randomizeTips()
 {
 	tipLines.clear();
 
-	int newIdx = RandomUtils::getRandomInt(0, sizeof(tipsText) / sizeof(std::string) - 1);
+	int newIdx = RandomUtils::random(0, static_cast<int>(sizeof(tipsText) / sizeof(std::string) - 1));
 	while (tipsIdx == newIdx)
-		newIdx = RandomUtils::getRandomInt(0, sizeof(tipsText) / sizeof(std::string) - 1);
+		newIdx = RandomUtils::random(0, static_cast<int>(sizeof(tipsText) / sizeof(std::string) - 1));
 
 	tipsIdx = newIdx;
 
@@ -89,6 +95,26 @@ void gd::LoadingScreen::splitTipsText()
 	}
 }
 
+void gd::LoadingScreen::spawnSmoke()
+{
+	if (smokeClock.getElapsedTime().asSeconds() < smokeInterval)
+		return;
+
+	//LogUtils::log("Getting smoke from pool");
+
+	for (SmokeParticle* smokeParticle : smoke)
+	{
+		if (!smokeParticle->isAlive)
+		{
+			smokeParticle->start();
+			break;
+		}
+	}
+
+	smokeInterval = RandomUtils::random(1.f, 2.f);
+	smokeClock.restart();
+}
+
 void gd::LoadingScreen::fadeAssetsOut(sf::Time deltaTime)
 {
 	// current stuff
@@ -114,15 +140,27 @@ void gd::LoadingScreen::fadeAssetsOut(sf::Time deltaTime)
 		text.setFillColor(sf::Color(255, 255, 255, MathUtils::interpolateTowards(fillAlpha, 0, fadeRate * deltaTime.asSeconds())));
 	}
 
+	if (isFinishedLoading)
+	{
+		level.setColor(sf::Color(255, 255, 255, MathUtils::interpolateTowards(level.getColor().a, 0, fadeRate * deltaTime.asSeconds())));
+		music.setVolume(MathUtils::interpolateTowards(music.getVolume(), 0, fadeRate * deltaTime.asSeconds()));
+	}
+
 	if (bgAlpha <= 0)
 	{
 		isFadingOut = false;
+		if (isFinishedLoading)
+		{
+			//LogUtils::log(this, "Finished loading.");
+			return;
+		}
+
 		isFadingIn = true;
 		randomizeSprites();
 		randomizeTips();
 		setAssetsTransparent(); // coz tipsLines gets reset
-		LogUtils::log(this, "Done fading out. isFadingOut = " + std::to_string(isFadingOut));
-		LogUtils::log(this, "isFadingIn = " + std::to_string(isFadingIn));
+		//LogUtils::log(this, "Done fading out. isFadingOut = " + std::to_string(isFadingOut));
+		//LogUtils::log(this, "isFadingIn = " + std::to_string(isFadingIn));
 	}
 }
 
@@ -155,8 +193,8 @@ void gd::LoadingScreen::fadeAssetsIn(sf::Time deltaTime)
 	{
 		isFadingOut = false;
 		isFadingIn = false;
-		LogUtils::log(this, "Done fading in, resetting timer.");
-		transitionTimer.restart();
+		//LogUtils::log(this, "Done fading in, resetting timer.");
+		transitionClock.restart();
 	}
 }
 
@@ -179,45 +217,40 @@ void gd::LoadingScreen::setAssetsTransparent()
 	}
 }
 
-void gd::LoadingScreen::moveSmoke(sf::Time deltaTime)
-{
-
-}
-
 void gd::LoadingScreen::randomizeSprites()
 {
-	int newBgIdx = RandomUtils::getRandomInt(0, backgrounds.size() - 1);
+	int newBgIdx = RandomUtils::random(0, static_cast<int>(backgrounds.size() - 1));
 	while (backgroundIdx == newBgIdx)
-		newBgIdx = RandomUtils::getRandomInt(0, backgrounds.size() - 1);
+		newBgIdx = RandomUtils::random(0, static_cast<int>(backgrounds.size() - 1));
 
 	backgroundIdx = newBgIdx;
 
-	int newHlIdx = RandomUtils::getRandomInt(0, highlights.size() - 1);
+	int newHlIdx = RandomUtils::random(0, static_cast<int>(highlights.size() - 1));
 	while (highlightIdx == newHlIdx)
-		newHlIdx = RandomUtils::getRandomInt(0, highlights.size() - 1);
+		newHlIdx = RandomUtils::random(0, static_cast<int>(highlights.size() - 1));
 
 	highlightIdx = newHlIdx;
 }
 
 void gd::LoadingScreen::interpSprites(const sf::Time deltaTime)
 {
-	sf::Vector2i mousePos = sf::Mouse::getPosition(Application::getInstance()->getWindow());
+	const sf::Vector2i mousePos = sf::Mouse::getPosition(Application::getInstance()->getWindow());
 	//LogUtils::log("Mouse position: " + std::to_string(mousePos.x) + ", " + std::to_string(mousePos.y));
 
-	float xOffset = (mousePos.x - WindowWidth / 2.f);
-	float yOffset = (mousePos.y - WindowHeight / 2.f);
-	float bgDepthScale = 0.02f;
-	float hlDepthScale = 0.05f;
-	float lerpSpeed = 100.f;
+	const float xOffset = (mousePos.x - WindowWidth / 2.f);
+	const float yOffset = (mousePos.y - WindowHeight / 2.f);
+	constexpr float bgDepthScale = 0.02f;
+	constexpr float hlDepthScale = 0.05f;
+	constexpr float lerpSpeed = 100.f;
 
 	auto& hl = highlights[highlightIdx];
 	// bg original position
 	auto& bg = backgrounds[backgroundIdx];
-	float xBg = WindowWidth / 2.f - bg.getGlobalBounds().size.x / 2.f;
-	float yBg = WindowHeight / 2.f - bg.getGlobalBounds().size.y / 2.f;
+	const float xBg = WindowWidth / 2.f - bg.getGlobalBounds().size.x / 2.f;
+	const float yBg = WindowHeight / 2.f - bg.getGlobalBounds().size.y / 2.f;
 
-	sf::Vector2f offsetVec = { xOffset, yOffset };
-	sf::Vector2f bgOriginalPos = { xBg, yBg };
+	const sf::Vector2f offsetVec = { xOffset, yOffset };
+	const sf::Vector2f bgOriginalPos = { xBg, yBg };
 
 	bg.setPosition(MathUtils::interpolateTowards(bg.getPosition(), bgOriginalPos + offsetVec * bgDepthScale, lerpSpeed * deltaTime.asSeconds()));
 	hl.setPosition(MathUtils::interpolateTowards(hl.getPosition(), offsetVec * hlDepthScale, lerpSpeed * deltaTime.asSeconds()));
@@ -225,27 +258,29 @@ void gd::LoadingScreen::interpSprites(const sf::Time deltaTime)
 
 void gd::LoadingScreen::update(const sf::Time deltaTime)
 {
-	if (isFinishedLoading)
-		return;
+	spawnSmoke();
 
-	if (transitionTimer.getElapsedTime().asSeconds() >= transitionInterval 
-		&& !isFadingOut
-		&& !isFadingIn)
+	if (isFinishedLoading)
+	{
+		fadeAssetsOut(deltaTime);
+		return;
+	}
+
+	if (transitionClock.getElapsedTime().asSeconds() >= transitionInterval)
 	{
 		isFadingOut = true;
+		transitionClock.reset();
 	}
 
 	if (isFadingOut)
 	{
 		//LogUtils::log(this, "isFadingOut = " + std::to_string(isFadingOut));
-
 		fadeAssetsOut(deltaTime);
 	}
 
 	if (isFadingIn)
 	{
 		//LogUtils::log(this, "isFadingIn = " + std::to_string(isFadingIn));
-
 		fadeAssetsIn(deltaTime);
 	}
 
@@ -254,8 +289,8 @@ void gd::LoadingScreen::update(const sf::Time deltaTime)
 
 void gd::LoadingScreen::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	if (isFinishedLoading)
-		return;
+	// if (isFinishedLoading)
+	// 	return;
 
 	target.draw(backgrounds[backgroundIdx]);
 	target.draw(highlights[highlightIdx]);
@@ -264,11 +299,6 @@ void gd::LoadingScreen::draw(sf::RenderTarget& target, sf::RenderStates states) 
 	for (const sf::Text& line : tipLines)
 	{
 		target.draw(line);
-	}
-
-	for (const sf::Sprite& sprite : smoke)
-	{
-		target.draw(sprite);
 	}
 }
 

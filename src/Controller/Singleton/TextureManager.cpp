@@ -41,7 +41,7 @@ void TextureManager::loadFromAssetList(IExecutionEvent* executionEvent)
 	for (const auto& entry : std::filesystem::directory_iterator(streamingPath))
 	{
 		// Artificial delay
-		//IETThread::sleep(1000);
+		IETThread::sleep(100);
 
 		std::vector<String> tokens = StringUtils::split(entry.path().generic_string(), '/');
 		String assetName = StringUtils::split(tokens[tokens.size() - 1], '.')[0];
@@ -226,7 +226,7 @@ void TextureManager::loadLoadingScreenTextures()
 		LogUtils::log(this, "Smoke list size: " + std::to_string(smokeList.size()));
 	}
 
-	auto levelDisplayPath = FileUtils::getFileFromAssetsFolder("Level Display.png");
+	const auto levelDisplayPath = FileUtils::getFileFromAssetsFolder("Level Display.png");
 	sf::Texture* texture = new sf::Texture();
 	LogUtils::logBool(this, texture->loadFromFile(levelDisplayPath));
 	this->textureMap["Level Display"].push_back(texture);

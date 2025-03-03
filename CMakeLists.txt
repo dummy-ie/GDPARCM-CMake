@@ -45,6 +45,6 @@ add_executable(
     "src/Threading/BaseAssetLoader.h"
     "src/GameObject/LoadingScreen.h" 
     "src/GameObject/LoadingScreen.cpp" 
- "src/Utility/MathUtils.h")
+ "src/Utility/MathUtils.h" "src/GameObject/SmokeParticle.h" "src/GameObject/SmokeParticle.cpp" "src/Utility/RandomUtils.cpp")
 
 target_link_libraries(GDPARCM PRIVATE SFML::Graphics SFML::Audio)

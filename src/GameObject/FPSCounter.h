@@ -18,7 +18,7 @@ namespace gd
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 	private:
-		sf::Font fpsCounterFont = sf::Font(FileUtils::getFileFromAssetsFolder("Sansation.ttf"));
+		sf::Font fpsCounterFont = sf::Font(FileUtils::getFileFromAssetsFolder("Futura Condensed.ttf"));
 		sf::Text fpsCounter = fpsCounterFont;
 
 		sf::Clock updateClock;

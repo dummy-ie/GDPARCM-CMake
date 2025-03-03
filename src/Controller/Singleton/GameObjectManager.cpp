@@ -34,6 +34,15 @@ void GameObjectManager::addObject(GameObject* gameObject)
 	gameObjectList.push_back(gameObject);
 }
 
+void GameObjectManager::removeObject(GameObject* gameObject)
+{
+	if (const auto it = std::ranges::find(gameObjectList, gameObject); it != gameObjectList.end())
+	{
+		delete* it;
+		gameObjectList.erase(it);
+	}
+}
+
 void GameObjectManager::drawAllObjects(sf::RenderWindow* window) const
 {
 	for (const GameObject* gameObject : gameObjectList)

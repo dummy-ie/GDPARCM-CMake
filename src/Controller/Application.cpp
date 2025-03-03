@@ -26,9 +26,11 @@ Application::Application()
 	LoadingScreen* loadingScreen = new LoadingScreen();
 	GameObjectManager::getInstance()->addObject(loadingScreen);
 
-	// TextureDisplay* textureDisplay = new TextureDisplay();
-	// GameObjectManager::getInstance()->addObject(textureDisplay);
-	// textureDisplay->startLoading();
+	TextureDisplay* textureDisplay = new TextureDisplay();
+	GameObjectManager::getInstance()->addObject(textureDisplay);
+
+	textureDisplay->loadingScreen = loadingScreen;
+	textureDisplay->startLoading();
 
 	window.setFramerateLimit(FramerateCap);
 }

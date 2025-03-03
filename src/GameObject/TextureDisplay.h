@@ -12,6 +12,7 @@
 #include "GameObject.h"
 #include "../Threading/IExecutionEvent.h"
 #include "SFML/Audio/Music.hpp"
+#include "LoadingScreen.h"
 
 namespace gd
 {
@@ -27,6 +28,8 @@ namespace gd
 		void startLoading();
 		void update(const sf::Time deltaTime) override;
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+		LoadingScreen* loadingScreen;
 
 	private:
 		sf::Music music;
@@ -47,8 +50,13 @@ namespace gd
 
 		int numDisplayed = 0;
 		int displayIdx = 0;
+		int alpha = 0;
 		bool isDoneDisplaying = false;
 		bool isDoneLoading = false;
+
+		IconObject* prev = nullptr;
+
+		sf::Clock loadInClock;
 
 		void spawnObject();
 

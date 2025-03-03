@@ -11,6 +11,7 @@ TextureDisplay::TextureDisplay() : GameObject("TextureDisplay")
 
 	//updateClock.start();
 	iconList.reserve(1457);
+	loadInClock.reset();
 }
 
 void TextureDisplay::startLoading()
@@ -22,6 +23,11 @@ void TextureDisplay::startLoading()
 void TextureDisplay::update(const sf::Time deltaTime)
 {
 	if (!isDoneLoading)
+		return;
+
+	//LogUtils::log(this, "Finished loading, " + std::to_string(loadInClock.getElapsedTime().asSeconds()));
+
+	if (loadInClock.getElapsedTime().asSeconds() <= 5.f)
 		return;
 
 	if (this->numDisplayed == 1)
@@ -42,16 +48,25 @@ void TextureDisplay::update(const sf::Time deltaTime)
 
 		if (displayIdx + 1 == TextureManager::getInstance()->getNumLoadedBaseTextures())
 		{
-			displayIdx = 0;
+			//displayIdx = 0;
 			isDoneDisplaying = true;
-			for (IconObject* iconObject : this->iconList)
+
+			if (prev)
 			{
-				iconObject->sprite->setColor(sf::Color(255, 255, 255, 0));
+				const auto prevA = prev->sprite->getColor().a;
+				prev->sprite->setColor(sf::Color(255, 255, 255, MathUtils::interpolateTowards(prevA, 0, 100.f * deltaTime.asSeconds())));
 			}
+
+			// for (IconObject* iconObject : this->iconList)
+			// {
+			// 	iconObject->sprite->setColor(sf::Color(255, 255, 255, ));
+			// }
 		}
 
 		if (!isDoneDisplaying)
+		{
 			spawnObject();
+		}
 		// else
 		// 	this->iconList.at(displayIdx)->sprite->setColor(sf::Color::White);
 
@@ -71,6 +86,9 @@ void TextureDisplay::draw(sf::RenderTarget& target, sf::RenderStates states) con
 
 void TextureDisplay::spawnObject()
 {
+	if (prev)
+		prev->sprite->setColor(sf::Color::Transparent);
+
 	//String objectName = "Icon_" + std::to_string(this->iconList.size());
 	int idx = displayIdx;
 
@@ -83,24 +101,23 @@ void TextureDisplay::spawnObject()
 	constexpr int imgHeight = 352;
 	float x = WindowWidth / 2.f - (imgWidth * scale) / 2.f;
 	float y = WindowHeight / 2.f - (imgHeight * scale) / 2.f;
+	iconObj->sprite->setColor(sf::Color(255, 255, 255, alpha));
 	iconObj->setPosition({ x, y });
 	iconObj->setScale({ scale, scale });
 
-	//LogUtils::log( this, "Set position: " + std::to_string(x) + " " + std::to_string(y));
+	prev = iconObj;
 
-	// this->columnGrid++;
-	// if (this->columnGrid == this->maxColumn)
-	// {
-	// 	this->columnGrid = 0;
-	// 	this->rowGrid++;
-	// }
+	if (alpha < 255)
+		alpha += 2;
+	else
+		alpha = 255;
 
-	//GameObjectManager::getInstance()->addObject(iconObj);
-	//LogUtils::log( this, "Added IconObject, iconList size: " + std::to_string(iconList.size()));
 	displayIdx++;
 }
 
 void TextureDisplay::onFinishedExecution()
 {
+	loadingScreen->finishLoading();
 	isDoneLoading = true;
+	loadInClock.start();
 }
