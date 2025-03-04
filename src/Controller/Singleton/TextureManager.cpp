@@ -38,7 +38,7 @@ void TextureManager::loadFromAssetList(IExecutionEvent* executionEvent)
 {
 	LogUtils::log(this, "Reading from asset list");
 
-	for (const auto& entry : std::filesystem::directory_iterator(streamingPath))
+	for (const auto& entry : std::filesystem::directory_iterator(assetPath))
 	{
 		// Artificial delay
 		IETThread::sleep(100);
@@ -58,7 +58,7 @@ void TextureManager::loadSingleStreamAsset(const int index, IExecutionEvent* exe
 {
 	int fileNum = 0;
 
-	for (const auto& entry : std::filesystem::directory_iterator(streamingPath)) {
+	for (const auto& entry : std::filesystem::directory_iterator(assetPath)) {
 		if (index == fileNum)
 		{
 			//simulate loading of very large file
@@ -163,7 +163,7 @@ int TextureManager::getNumLoadedSmokeTextures() const
 void TextureManager::countStreamingAssets()
 {
 	this->streamingAssetCount = 0;
-	for (const auto& entry : std::filesystem::directory_iterator(streamingPath)) {
+	for (const auto& entry : std::filesystem::directory_iterator(assetPath)) {
 		//instantiateAsTexture(entry.path().string(), std::to_string(streamingAssetCount), true);
 		//LogUtils::log(this, "Loaded in stream asset: " + std::to_string(this->streamingAssetCount));
 		this->streamingAssetCount++;

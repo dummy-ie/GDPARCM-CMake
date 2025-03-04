@@ -15,6 +15,7 @@ gd::LoadingScreen::LoadingScreen() :
 
 	highlights.reserve(10);
 	backgrounds.reserve(10);
+	smoke.reserve(10);
 
 	for (int i = 0; i < TextureManager::getInstance()->getNumLoadedHighlightTextures(); ++i)
 	{
@@ -63,9 +64,9 @@ void gd::LoadingScreen::randomizeTips()
 
 	tipsIdx = newIdx;
 
-	auto str = tipsText[tipsIdx];
+	const auto str = tipsText[tipsIdx];
 
-	std::vector<std::string> strLines = StringUtils::split(str, '\n');
+	const std::vector<std::string> strLines = StringUtils::split(str, '\n');
 
 	for (int i = 0; i < strLines.size(); ++i)
 	{
@@ -115,7 +116,7 @@ void gd::LoadingScreen::spawnSmoke()
 	smokeClock.restart();
 }
 
-void gd::LoadingScreen::fadeAssetsOut(sf::Time deltaTime)
+void gd::LoadingScreen::fadeAssetsOut(const sf::Time deltaTime)
 {
 	// current stuff
 	auto& bg = backgrounds[backgroundIdx];
@@ -164,7 +165,7 @@ void gd::LoadingScreen::fadeAssetsOut(sf::Time deltaTime)
 	}
 }
 
-void gd::LoadingScreen::fadeAssetsIn(sf::Time deltaTime)
+void gd::LoadingScreen::fadeAssetsIn(const sf::Time deltaTime)
 {
 	// current stuff
 	auto& bg = backgrounds[backgroundIdx];

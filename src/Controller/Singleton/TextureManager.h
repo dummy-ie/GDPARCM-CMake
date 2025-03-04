@@ -66,7 +66,7 @@ namespace gd
 		TextureList baseTextureList;
 		TextureList streamTextureList;
 
-		const std::filesystem::path streamingPath = FileUtils::getFileFromAssetsFolder("StreamingFullRes/");
+		const std::filesystem::path assetPath = FileUtils::getFileFromAssetsFolder("StreamingFullRes/");
 		const std::filesystem::path backgroundImagesPath = FileUtils::getFileFromAssetsFolder("Loading Screen Background Images/");
 		const std::filesystem::path highlightImagesPath = FileUtils::getFileFromAssetsFolder("Loading Screen Highlight Images/");
 		const std::filesystem::path smokeImagesPath = FileUtils::getFileFromAssetsFolder("Smoke Effects/");

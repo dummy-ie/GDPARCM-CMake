@@ -25,8 +25,6 @@ void TextureDisplay::update(const sf::Time deltaTime)
 	if (!isDoneLoading)
 		return;
 
-	//LogUtils::log(this, "Finished loading, " + std::to_string(loadInClock.getElapsedTime().asSeconds()));
-
 	if (loadInClock.getElapsedTime().asSeconds() <= 5.f)
 		return;
 
@@ -38,9 +36,7 @@ void TextureDisplay::update(const sf::Time deltaTime)
 	this->ticks += FixedDeltaTime.asMilliseconds();
 	if (this->streamingType == StreamingType::BATCH_LOAD && !this->startedStreaming && this->ticks > this->FRAME_RATE)
 	{
-		// this->startedStreaming = true;
-		// this->ticks = 0.0f;
-		// TextureManager::getInstance()->loadStreamingAssets();
+
 	}
 	else if (this->streamingType == StreamingType::SINGLE_STREAM && this->ticks > this->FRAME_RATE)
 	{
@@ -48,7 +44,6 @@ void TextureDisplay::update(const sf::Time deltaTime)
 
 		if (displayIdx + 1 == TextureManager::getInstance()->getNumLoadedBaseTextures())
 		{
-			//displayIdx = 0;
 			isDoneDisplaying = true;
 
 			if (prev)
@@ -56,21 +51,12 @@ void TextureDisplay::update(const sf::Time deltaTime)
 				const auto prevA = prev->sprite->getColor().a;
 				prev->sprite->setColor(sf::Color(255, 255, 255, MathUtils::interpolateTowards(prevA, 0, 100.f * deltaTime.asSeconds())));
 			}
-
-			// for (IconObject* iconObject : this->iconList)
-			// {
-			// 	iconObject->sprite->setColor(sf::Color(255, 255, 255, ));
-			// }
 		}
 
 		if (!isDoneDisplaying)
 		{
 			spawnObject();
 		}
-		// else
-		// 	this->iconList.at(displayIdx)->sprite->setColor(sf::Color::White);
-
-		//TextureManager::getInstance()->loadSingleStreamAsset(this->numDisplayed, this);
 		this->numDisplayed++;
 	}
 }
